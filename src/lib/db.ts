@@ -34,15 +34,37 @@ export async function addNote(note: INote): Promise<number> {
   });
 }
 
-export async function getNotes(): Promise<INote[]> {
+export async function getNotes(searchQuery: string = ""): Promise<INote[]> {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction("notes", "readonly");
     const store = transaction.objectStore("notes");
-    const request = store.getAll();
+    const results: INote[] = [];
 
-    request.onsuccess = () => resolve(request.result as INote[]);
+    const request = store.openCursor();
+
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor) {
+        const note = cursor.value;
+        const title = note.title?.toString() || "";
+        const description = note.description?.toString() || "";
+        const search = searchQuery.toLowerCase();
+
+        const matches = searchQuery
+          ? title.toLowerCase().includes(search) ||
+            description.toLowerCase().includes(search)
+          : true;
+
+        if (matches) results.push(note);
+        cursor.continue();
+      } else {
+        resolve(results);
+      }
+    };
+
     request.onerror = () => reject(request.error);
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 

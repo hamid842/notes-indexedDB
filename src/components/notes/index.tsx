@@ -8,9 +8,12 @@ import NoteForm from "./note-form";
 import NoteSkeleton from "../skeleton/note-skeleton";
 import { toast } from "sonner";
 import NoteItem from "./note-item";
+import SearchInput from "./search-input";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function Notes() {
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [notes, setNotes] = useState<IOptimisticNote[]>([]);
   const [optimisticNotes, setOptimisticNotes] =
@@ -19,15 +22,17 @@ export default function Notes() {
     null
   );
 
-  useEffect(() => {
-    loadNotes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const loadNotes = async () => {
+  useEffect(() => {
+    loadNotes(debouncedSearchQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchQuery]);
+
+  const loadNotes = async (searchQuery: string) => {
     try {
       setLoading(true);
-      const storedNotes = await getNotes();
+      const storedNotes = await getNotes(searchQuery);
 
       startTransition(() => {
         setNotes(storedNotes);
@@ -46,6 +51,11 @@ export default function Notes() {
       <div className="w-full max-w-md">
         <div className="flex items-center justify-between">
           <p className="font-bold">Notes</p>
+          <SearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onClickClose={() => setSearchQuery("")}
+          />
           <Button
             variant={"ghost"}
             className="text-blue-600 hover:bg-transparent hover:text-blue-800 cursor-pointer"
@@ -55,7 +65,7 @@ export default function Notes() {
             Add New
           </Button>
         </div>
-        <Separator />
+        <Separator className="my-2" />
         {loading && [...new Array(3)].map((_, i) => <NoteSkeleton key={i} />)}
         {editMode && (
           <NoteForm

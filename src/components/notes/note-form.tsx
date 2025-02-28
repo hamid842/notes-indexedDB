@@ -83,7 +83,12 @@ export default function NoteForm({
         setSelectedNote(null);
       }
     } else {
-      const newNote: INote = { ...data, id: Date.now(), content: data.content };
+      const newNote: INote = {
+        ...data,
+        id: Date.now(),
+        content: data.content,
+        createdAt: new Date().toISOString(),
+      };
       startTransition(() => {
         setOptimisticNotes((prevNotes) => [...prevNotes, newNote]);
       });
