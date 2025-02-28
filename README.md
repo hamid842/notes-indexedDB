@@ -15,6 +15,7 @@ This is a simple note-taking application that allows users to create and manage 
 - **Create Notes** - Add new notes with title and content.
 - **Edit Notes** - Modify existing notes.
 - **Delete Notes** - Remove notes from the list.
+- **Search Notes** - Search a specific titles from the list.
 - **Optimistic UI Updates** - Updates are shown immediately while interacting with the application for a seamless user experience.
 - **IndexedDB Storage** - Notes are saved locally in the browser, so they persist even when the page is refreshed (if supported by the browser).
 - **Dark/Light Theme** - stored into localStorage
@@ -35,14 +36,19 @@ cd notes-indexedDB
 You can choose your preferred package manager:
 
 **With npm:**
+
 ```bash
 npm install
 ```
+
 **with yarn:**
+
 ```bash
 yarn or yarn install
 ```
+
 **with pnpm**
+
 ```
 pnpm install
 ```
@@ -50,17 +56,23 @@ pnpm install
 Once the server starts, open your browser and navigate to `http://localhost:3000` to see the app in action.
 
 ### Building the Project
+
 To create a production build, use the following commands:
 
 **With npm:**
+
 ```bash
 npm run build
 ```
+
 **with yarn:**
+
 ```bash
 yarn build
 ```
+
 **with pnpm**
+
 ```
 pnpm build
 ```
@@ -68,5 +80,5 @@ pnpm build
 The build will be output to the `dist/` directory, and you can deploy the static files to your hosting service of choice.
 
 ### Browser Support
-This application uses IndexedDB for local note storage. The majority of modern browsers support this feature, but if your browser doesn’t, you will receive a warning message.
 
+This application uses IndexedDB for local note storage. The majority of modern browsers support this feature, but if your browser doesn’t, you will receive a warning message.
